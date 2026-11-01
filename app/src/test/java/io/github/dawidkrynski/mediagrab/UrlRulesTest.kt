@@ -63,6 +63,7 @@ class UrlRulesTest {
     @Test fun instagramPostsUseGalleryDlAndReelsYtDlp() {
         assertEquals(Engine.GALLERY_DL, UrlRules.engine("https://www.instagram.com/p/abc/"))
         assertEquals(Engine.GALLERY_DL, UrlRules.engine("https://www.instagram.com/nazwa/p/abc/"))
+        assertEquals(Engine.GALLERY_DL, UrlRules.engine("https://x.com/nazwa/status/123"))
         assertEquals(Engine.YT_DLP, UrlRules.engine("https://www.instagram.com/reel/abc/"))
         assertEquals(Engine.YT_DLP, UrlRules.engine("https://youtu.be/abc"))
     }

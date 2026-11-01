@@ -69,7 +69,10 @@ object UrlRules {
     private fun hasVideoParam(url: String): Boolean =
         url.substringAfter('?', "").split('&').any { it.startsWith("v=") }
 
-    /** Keep /p/ with gallery-dl so carousels retain images. */
-    fun engine(url: String): Engine =
-        if (source(url) == "instagram" && INSTAGRAM_POST.containsMatchIn(path(url))) Engine.GALLERY_DL else Engine.YT_DLP
+    /** Keep Instagram /p/ and X posts with gallery-dl so posts mixing photos and videos stay complete. */
+    fun engine(url: String): Engine = when {
+        source(url) == "x" -> Engine.GALLERY_DL
+        source(url) == "instagram" && INSTAGRAM_POST.containsMatchIn(path(url)) -> Engine.GALLERY_DL
+        else -> Engine.YT_DLP
+    }
 }

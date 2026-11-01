@@ -152,7 +152,13 @@ class DownloadService : Service() {
 
     /** Returns the failure of the last engine tried, or null. Files may exist despite a failure. */
     private fun runEngines(url: String, media: File, cookies: File?, onProgress: (Int) -> Unit): Failure? {
-        if (UrlRules.engine(url) == Engine.GALLERY_DL) return attempt { engines.galleryDl(url, media, cookies) }
+        if (UrlRules.engine(url) == Engine.GALLERY_DL) {
+            val failure = attempt { engines.galleryDl(url, media, cookies) }
+            val empty = media.walkTopDown().none { it.isFile }
+            // gallery-dl exits cleanly with no files when it finds nothing, so yt-dlp still gets a try.
+            val retry = empty && (failure == null || failure.triesOtherEngine) && UrlRules.source(url) != "instagram"
+            return if (retry) attempt { engines.ytDlp(url, media, cookies, onProgress) } else failure
+        }
         val failure = attempt { engines.ytDlp(url, media, cookies, onProgress) } ?: return null
         if (!failure.triesOtherEngine) return failure
         return attempt { engines.galleryDl(url, media, cookies) }
