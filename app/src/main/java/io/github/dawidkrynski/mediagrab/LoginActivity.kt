@@ -24,6 +24,9 @@ class LoginActivity : Activity() {
         web.settings.userAgentString = web.settings.userAgentString.replace("; wv", "")
         web.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) = saveIfLoggedIn()
+
+            // Instagram often changes pages without a full load.
+            override fun doUpdateVisitedHistory(view: WebView, url: String, isReload: Boolean) = saveIfLoggedIn()
         }
         web.loadUrl(LOGIN_URL)
     }

@@ -31,6 +31,7 @@ class UrlRulesTest {
         listOf(
             "https://www.youtube.com/playlist?list=PL1",
             "https://www.youtube.com/@kanal",
+            "https://www.youtube.com/watch?list=PL1",
             "https://www.instagram.com/nazwa/",
             "https://www.tiktok.com/@nazwa",
             "https://x.com/nazwa",

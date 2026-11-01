@@ -12,12 +12,17 @@ import java.io.File
 class Publisher(private val context: Context) {
     data class Saved(val uri: Uri, val mimeType: String)
 
-    fun publish(staging: File, source: String): List<Saved> =
-        staging.walkTopDown()
-            .filter { it.isFile && it.extension.lowercase() !in PARTIAL_EXTENSIONS }
-            .sortedBy { it.name }
-            .map { publishFile(it, source) }
-            .toList()
+    data class Published(val files: List<Saved>, val anyFailed: Boolean)
+
+    /** One unreadable or unwritable file must not hide the ones already saved. */
+    fun publish(staging: File, source: String, checkCanceled: () -> Unit): Published {
+        val files = staging.walkTopDown().filter { it.isFile && isFinished(it.name) }.sortedBy { it.name }.toList()
+        val saved = files.mapNotNull { file ->
+            checkCanceled()
+            runCatching { publishFile(file, source) }.getOrNull()
+        }
+        return Published(saved, saved.size < files.size)
+    }
 
     private fun publishFile(file: File, source: String): Saved {
         val resolver = context.contentResolver
@@ -43,7 +48,12 @@ class Publisher(private val context: Context) {
         return Saved(uri, mimeType)
     }
 
-    private companion object {
-        val PARTIAL_EXTENSIONS = setOf("part", "ytdl", "temp", "tmp")
+    companion object {
+        private val PARTIAL_EXTENSIONS = setOf("part", "ytdl", "temp", "tmp")
+        private val UNMERGED_STREAM = Regex("""\.f[0-9a-z-]+\.\w+$""", RegexOption.IGNORE_CASE)
+
+        /** After a failed merge yt-dlp leaves separate streams such as name.f137.mp4. */
+        fun isFinished(name: String): Boolean =
+            name.substringAfterLast('.', "").lowercase() !in PARTIAL_EXTENSIONS && !UNMERGED_STREAM.containsMatchIn(name)
     }
 }

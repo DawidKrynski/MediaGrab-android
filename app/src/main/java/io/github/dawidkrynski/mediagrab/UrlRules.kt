@@ -57,7 +57,7 @@ object UrlRules {
     fun isCollection(url: String): Boolean {
         val path = path(url)
         return when (source(url)) {
-            "youtube" -> YOUTUBE_COLLECTION.containsMatchIn(path)
+            "youtube" -> YOUTUBE_COLLECTION.containsMatchIn(path) || (path == "/watch" && !hasVideoParam(url))
             "instagram" -> !INSTAGRAM_SINGLE.containsMatchIn(path)
             "tiktok" -> path.startsWith("/@") && !TIKTOK_SINGLE.containsMatchIn(path)
             "x" -> !X_SINGLE.containsMatchIn(path)
@@ -65,6 +65,9 @@ object UrlRules {
             else -> false
         }
     }
+
+    private fun hasVideoParam(url: String): Boolean =
+        url.substringAfter('?', "").split('&').any { it.startsWith("v=") }
 
     /** Keep /p/ with gallery-dl so carousels retain images. */
     fun engine(url: String): Engine =

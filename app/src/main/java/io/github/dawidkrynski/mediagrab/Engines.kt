@@ -39,7 +39,7 @@ class Engines(private val context: Context) {
     }
 
     fun ytDlp(url: String, dir: File, cookies: File?, onProgress: (Int) -> Unit) {
-        if (canceled) throw Canceled()
+        throwIfCanceled()
         val request = YoutubeDLRequest(url).apply {
             addOption("--ignore-config")
             addOption("--no-colors")
@@ -58,18 +58,22 @@ class Engines(private val context: Context) {
             cookies?.let { addOption("--cookies", it.path) }
         }
         try {
-            YoutubeDL.execute(request, PROCESS_ID) { progress, _, _ -> onProgress(progress.toInt()) }
+            YoutubeDL.execute(request, PROCESS_ID) { progress, _, _ ->
+                // A cancel can arrive before the process is registered and find nothing to stop.
+                if (canceled) YoutubeDL.destroyProcessById(PROCESS_ID)
+                onProgress(progress.toInt())
+            }
         } catch (_: YoutubeDL.CanceledException) {
             throw Canceled()
         } catch (e: YoutubeDLException) {
             if (canceled) throw Canceled()
             throw EngineError(e.message.orEmpty())
         }
-        if (canceled) throw Canceled()
+        throwIfCanceled()
     }
 
     fun galleryDl(url: String, dir: File, cookies: File?) {
-        if (canceled) throw Canceled()
+        throwIfCanceled()
         val packages = File(context.noBackupFilesDir, "youtubedl-android/packages")
         val python = File(packages, "python/usr")
         val command = mutableListOf(
@@ -98,6 +102,7 @@ class Engines(private val context: Context) {
         }
         val process = builder.start()
         galleryProcess = process
+        if (canceled) process.destroy()
         val stderr = StringBuilder()
         val reader = thread(isDaemon = true) {
             process.errorStream.bufferedReader().forEachLine { if (stderr.length < MAX_STDERR) stderr.appendLine(it) }
@@ -114,6 +119,10 @@ class Engines(private val context: Context) {
         canceled = true
         YoutubeDL.destroyProcessById(PROCESS_ID)
         galleryProcess?.destroy()
+    }
+
+    fun throwIfCanceled() {
+        if (canceled) throw Canceled()
     }
 
     fun resetCancel() {

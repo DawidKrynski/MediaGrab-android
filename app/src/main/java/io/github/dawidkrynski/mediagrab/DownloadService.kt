@@ -76,8 +76,11 @@ class DownloadService : Service() {
         return START_NOT_STICKY
     }
 
+    /** Android kills an app that outlives this callback, so stopping cannot wait for the worker. */
     override fun onTimeout(startId: Int, fgsType: Int) {
         cancelAll()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     override fun onDestroy() {
@@ -94,11 +97,12 @@ class DownloadService : Service() {
     }
 
     private fun runNext() {
+        // Reset before taking the link: a cancel after this point either empties the queue or stays set.
+        engines.resetCancel()
         val url = queue.poll() ?: return
         wakeLock.acquire(WAKE_LOCK_MS)
         current = url
         try {
-            engines.resetCancel()
             val outcome = download(url)
             report(url, outcome)
             if (engines.updateIsOverdue() && pending.get() == 1) engines.updateYtDlp()
@@ -121,17 +125,19 @@ class DownloadService : Service() {
         val source = UrlRules.source(url)
         val staging = File(cacheDir, "jobs/${System.nanoTime()}")
         val media = File(staging, "media").apply { mkdirs() }
-        val cookies = if (source == "instagram") InstagramSession(this).copyTo(File(staging, "cookies.txt")) else null
         var failure: Failure? = null
         try {
+            val cookies = if (source == "instagram") InstagramSession(this).copyTo(File(staging, "cookies.txt")) else null
             engines.init()
             if (engines.neverUpdated) engines.updateYtDlp()
             showProgress(getString(R.string.downloading, source), null)
             failure = runEngines(url, media, cookies) { percent ->
                 showProgress(getString(R.string.downloading, source), percent)
             }
-            val files = Publisher(this).publish(media, source)
-            return if (files.isEmpty()) Outcome.Failed(failure ?: Failure.NO_MEDIA) else Outcome.Saved(files, failure)
+            val published = Publisher(this).publish(media, source, engines::throwIfCanceled)
+            if (published.anyFailed && failure == null) failure = Failure.UNKNOWN
+            return if (published.files.isEmpty()) Outcome.Failed(failure ?: Failure.NO_MEDIA)
+            else Outcome.Saved(published.files, failure)
         } catch (_: Canceled) {
             return Outcome.Canceled
         } catch (e: Exception) {
