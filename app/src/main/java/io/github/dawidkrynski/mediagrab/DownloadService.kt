@@ -41,6 +41,8 @@ class DownloadService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        // No job runs yet, so anything here was left by a killed process.
+        File(cacheDir, "jobs").deleteRecursively()
         engines = Engines(applicationContext)
         wakeLock = getSystemService(PowerManager::class.java)
             .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mediagrab:download")
