@@ -236,8 +236,8 @@ class DownloadService : Service() {
         val known = percent != null && percent in 0..100
         return Notification.Builder(this, CHANNEL_PROGRESS)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(text)
+            .setContentTitle(text)
+            .setContentText(if (known) "$percent%" else getString(R.string.preparing))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setProgress(100, if (known) percent!! else 0, !known)

@@ -132,6 +132,7 @@ class Engines(private val context: Context) {
     private fun galleryArchive(): File {
         val target = File(context.noBackupFilesDir, "gallery_dl-${BuildConfig.VERSION_CODE}.zip")
         if (!target.exists()) {
+            target.parentFile?.listFiles { f -> f.name.startsWith("gallery_dl-") }?.forEach { it.delete() }
             val temp = File(target.path + ".tmp")
             context.assets.open("gallery_dl.zip").use { input -> temp.outputStream().use { input.copyTo(it) } }
             temp.renameTo(target)
