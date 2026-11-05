@@ -1,0 +1,11 @@
+MediaGrab zapisuje filmy i zdjęcia z linków, które do niego udostępnisz.
+
+W dowolnej apce wybierz Udostępnij, a potem MediaGrab. Pobieranie rusza od razu, bez okna do potwierdzenia. Powiadomienie pokazuje postęp i pozwala anulować. Pliki trafiają do Pobrane/Media/<serwis>.
+
+* YouTube, TikTok, rolki z Instagrama i wiele innych serwisów obsługiwanych przez yt-dlp
+* Posty i karuzele z Instagrama w całości (wymaga zalogowania do Instagrama w apce)
+* Posty z X ze wszystkimi zdjęciami, filmami i GIF-ami
+* Profile i playlisty są odrzucane, więc jedno udostępnienie nie uruchomi setek pobrań
+* Kolejne linki pobierają się po kolei
+
+Apka korzysta z yt-dlp, gallery-dl i FFmpeg. yt-dlp aktualizuje się sam raz dziennie z GitHuba, bo serwisy często się zmieniają.

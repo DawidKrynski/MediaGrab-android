@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MediaGrab</string>
+    <string name="how_to">W dowolnej apce wybierz Udostępnij, a potem MediaGrab. Pobieranie rusza od razu. Pliki trafiają do Pobrane/Media.</string>
+    <string name="notifications_off">Powiadomienia są wyłączone, więc nie zobaczysz postępu.</string>
+    <string name="notifications_enable">Włącz powiadomienia</string>
+    <string name="instagram_title">Instagram</string>
+    <string name="instagram_in">Zalogowano. Sesja służy tylko do linków z Instagrama.</string>
+    <string name="instagram_out">Nie zalogowano. Rolki zwykle działają bez logowania, posty i karuzele go wymagają.</string>
+    <string name="instagram_login">Zaloguj</string>
+    <string name="instagram_logout">Wyloguj</string>
+    <string name="paste_title">Pobierz z linku</string>
+    <string name="paste_hint">Wklej link</string>
+    <string name="paste_go">Pobierz</string>
+    <string name="channel_progress">Pobieranie</string>
+    <string name="channel_result">Wyniki</string>
+    <string name="cancel">Anuluj</string>
+    <string name="starting">MediaGrab: pobieram</string>
+    <string name="no_link">MediaGrab: brak linku</string>
+    <string name="collection">MediaGrab pobiera pojedyncze posty, nie profile ani playlisty</string>
+    <string name="preparing">Przygotowanie</string>
+    <string name="downloading">Pobieranie z: %1$s</string>
+    <string name="saved_one">Zapisano plik</string>
+    <string name="saved_many">Zapisano plików: %1$d</string>
+    <string name="saved_partial">Część plików się nie pobrała</string>
+    <string name="failed">Nie udało się pobrać</string>
+    <string name="err_login">Ta treść wymaga logowania. Dotknij, aby się zalogować.</string>
+    <string name="err_login_other">Ta treść wymaga logowania, a MediaGrab loguje tylko do Instagrama.</string>
+    <string name="err_no_media">Pod tym linkiem nie ma zdjęć ani filmów.</string>
+    <string name="err_access">Serwis odmówił dostępu. Spróbuj później.</string>
+    <string name="err_rate">Serwis ogranicza liczbę pobrań. Spróbuj później.</string>
+    <string name="err_unsupported">Ten link nie jest obsługiwany.</string>
+    <string name="err_network">Problem z siecią.</string>
+    <string name="err_unavailable">Ta treść jest niedostępna.</string>
+    <string name="err_unknown">Nieznany błąd pobierania.</string>
+    <string name="login_saved">Instagram: zalogowano</string>
+</resources>

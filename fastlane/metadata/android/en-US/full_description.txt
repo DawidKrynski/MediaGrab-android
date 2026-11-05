@@ -1,0 +1,11 @@
+MediaGrab saves videos and photos from links you share to it.
+
+In any app tap Share and pick MediaGrab. The download starts at once, with no window to confirm. A notification shows the progress and lets you cancel. Files are saved to Download/Media/<site>.
+
+* YouTube, TikTok, Instagram reels and many other sites supported by yt-dlp
+* Instagram posts and carousels keep every photo and video (needs signing in to Instagram inside the app)
+* X posts keep all their photos, videos and GIFs
+* Profiles and playlists are refused, so one share never starts hundreds of downloads
+* Shared links are downloaded one after another
+
+The app uses yt-dlp, gallery-dl and FFmpeg. yt-dlp updates itself once a day from GitHub, because sites change often.
